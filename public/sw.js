@@ -33,10 +33,13 @@ const DEFAULT_PREFIX = "!";
 const DEFAULT_ROUTE = "g";
 
 async function handleRequest(request) {
-	const query = decodeURIComponent(new URL(request.url).searchParams.get("q"));
+	const urlObj = new URL(request.url);
+	const query = decodeURIComponent(urlObj.searchParams.get("q"));
+	// Use t param from URL if present, otherwise default to DEFAULT_ROUTE
+	const urlT = urlObj.searchParams.get("t");
 	let currentRoute = findRoute(DEFAULT_PREFIX, query);
 	if (!currentRoute) {
-		currentRoute = DEFAULT_ROUTE;
+		currentRoute = urlT || DEFAULT_ROUTE;
 	}
 
 	const isDoubleRoute = currentRoute.startsWith(DEFAULT_PREFIX.repeat(2));
@@ -46,8 +49,9 @@ async function handleRequest(request) {
 	);
 	if (!searchEngine) {
 		searchEngine = routes.find(
-			(route) => route.t === DEFAULT_ROUTE.replaceAll(DEFAULT_PREFIX, ""),
-		);	
+			(route) =>
+				route.t === (urlT || DEFAULT_ROUTE).replaceAll(DEFAULT_PREFIX, ""),
+		);
 	}
 
 	let processedQuery = cleanQuery(query, currentRoute);

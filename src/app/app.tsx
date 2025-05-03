@@ -10,6 +10,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Search } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 function App() {
 	const { install, uninstall, status } = useServiceWorker({
@@ -18,34 +20,56 @@ function App() {
 			type: "module",
 		},
 	});
-	const [url, setUrl] = useState<string>(`${window.location.href}?q=%s`);
+	const [defaultEngine, setDefaultEngine] = useState<string>("g");
+	const [url, setUrl] = useState<string>(`${window.location.href}?q=%s&t=g`);
 	const [geminiApikey, setGeminiApikey] = useState<string>("");
 	const [searchTerm, setSearchTerm] = useState("");
+	const [showQAlert, setShowQAlert] = useState(false);
 
 	const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (searchTerm.trim().length === 0) return;
-		window.location.href = `/?q=${encodeURIComponent(searchTerm)}`;
+		window.location.href = `/?q=${encodeURIComponent(searchTerm)}&t=${encodeURIComponent(defaultEngine)}`;
 	};
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: Also depending on url would cause infinite loop
 	useEffect(() => {
+		const urlObj = new URL(window.location.href);
+		urlObj.search = "";
+		// Manually construct the query string to avoid encoding %s
+		let query = `q=%s&t=${defaultEngine}`;
 		if (geminiApikey.length > 0) {
-			const urlObj = new URL(url);
-			urlObj.searchParams.set("api", btoa(geminiApikey));
-			setUrl(urlObj.toString());
+			query += `&api=${btoa(geminiApikey)}`;
 		}
-	}, [geminiApikey]);
+		urlObj.search = `?${query}`;
+		setUrl(urlObj.toString());
+	}, [geminiApikey, defaultEngine]);
 
-	const hasQueryParameter = new URLSearchParams(window.location.search).has(
-		"api",
-	);
+	useEffect(() => {
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.has("q")) {
+			setShowQAlert(true);
+		}
+	}, []);
 
 	return (
 		<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
 			<div className="min-h-dvh w-dvw flex flex-col bg-neutral-50 dark:bg-neutral-900 dark:text-white">
 				<AppHeader />
 				<main className="flex-1 flex flex-col items-center w-full py-8 gap-8">
+					{showQAlert && status !== "installed" && (
+						<div className="w-full max-w-[120ch] px-4 mb-4">
+							<Alert variant="destructive">
+								<AlertCircle className="h-4 w-4" />
+								<AlertTitle>routr is not installed</AlertTitle>
+								<AlertDescription>
+									<p>
+										You need to <b>install routr</b> (service worker) to use it
+										as a search engine router. Use the Install button below.
+									</p>
+								</AlertDescription>
+							</Alert>
+						</div>
+					)}
 					<div className="px-4 max-w-[120ch] w-full flex flex-col items-center">
 						<form
 							onSubmit={handleSearchSubmit}
@@ -134,6 +158,22 @@ function App() {
 												toast("URL copied to clipboard!");
 											}}
 										/>
+										<div className="flex flex-row items-center gap-2 mt-2">
+											<Label
+												htmlFor="default-engine"
+												className="text-neutral-700 dark:text-neutral-400"
+											>
+												Default engine:
+											</Label>
+											<Input
+												id="default-engine"
+												type="text"
+												className="w-24"
+												value={defaultEngine}
+												onChange={(e) => setDefaultEngine(e.target.value)}
+												placeholder="g, ddg, b, ..."
+											/>
+										</div>
 									</div>
 								</div>
 							</div>
