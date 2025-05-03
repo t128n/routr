@@ -178,8 +178,14 @@ function App() {
 								</div>
 							</div>
 						</div>
-						<div className="border border-dashed border-neutral-300 rounded-lg p-6 bg-white dark:border-neutral-600 dark:bg-neutral-950 dark:text-white flex flex-col gap-6">
-							<h2 className="text-xl mb-6">AI Integration (Experimental)</h2>
+						<div className="opacity-25 hover:opacity-100 transition duration-500 border border-dashed border-neutral-300 rounded-lg p-6 bg-white dark:border-neutral-600 dark:bg-neutral-950 dark:text-white flex flex-col gap-6">
+							<h2 className="text-xl">AI Integration (Experimental)</h2>
+							<p className="text-orange-500">
+								This feature has not been fully implemented nor tested yet. It
+								doesn't really add any value other than being a nice AI gimmick.
+								Please use it at your own risk. If you encounter any issues, you
+								can report them in the GitHub repository.
+							</p>
 							<p className="text-neutral-700 dark:text-neutral-400">
 								routr can optimize your search queries using AI. This feature
 								required a{" "}
