@@ -29,7 +29,7 @@ function App() {
 	const handleSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		if (searchTerm.trim().length === 0) return;
-		window.location.href = `/?q=${encodeURIComponent(searchTerm)}&t=${encodeURIComponent(defaultEngine)}`;
+		window.location.href = `/routr/?q=${encodeURIComponent(searchTerm)}&t=${encodeURIComponent(defaultEngine)}`;
 	};
 
 	useEffect(() => {
