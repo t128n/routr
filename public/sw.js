@@ -1,3 +1,5 @@
+import routes from "/routr/routes.js";
+
 //#region Service Worker Lifecycle
 
 /**
@@ -15,6 +17,8 @@ self.addEventListener("install", () => {
  * @param {FetchEvent} event
  */
 self.addEventListener("fetch", (event) => {
+	console.log(routes);
+
 	// Only intercept requests with a query parameter
 	if (!isRequestRelevant(event.request)) return fetch(event.request);
 
@@ -29,33 +33,6 @@ self.addEventListener("fetch", (event) => {
 
 const DEFAULT_PREFIX = "!";
 const DEFAULT_ROUTE = "g";
-const DEFAULT_ROUTES = [
-	{
-		id: "g",
-		name: "Google",
-		url: "https://www.google.com/search?q=%s",
-	},
-	{
-		id: "ddg",
-		name: "DuckDuckGo",
-		url: "https://duckduckgo.com/?q=%s",
-	},
-	{
-		id: "b",
-		name: "Bing",
-		url: "https://www.bing.com/search?q=%s",
-	},
-	{
-		id: "yt",
-		name: "YouTube",
-		url: "https://www.youtube.com/results?search_query=%s",
-	},
-	{
-		id: "w",
-		name: "Wikipedia",
-		url: "https://en.wikipedia.org/w/index.php?search=%s",
-	},
-];
 
 async function handleRequest(request) {
 	const query = decodeURIComponent(new URL(request.url).searchParams.get("q"));
@@ -66,13 +43,13 @@ async function handleRequest(request) {
 
 	const isDoubleRoute = route.startsWith(DEFAULT_PREFIX.repeat(2));
 
-	let searchEngine = DEFAULT_ROUTES.find(
-		(engine) => engine.id === route.replaceAll(DEFAULT_PREFIX, ""),
+	let searchEngine = routes.find(
+		(route) => route.t === route.replaceAll(DEFAULT_PREFIX, ""),
 	);
 	if (!searchEngine) {
-		searchEngine = DEFAULT_ROUTES.find(
-			(engine) => engine.id === DEFAULT_ROUTE.replaceAll(DEFAULT_PREFIX, ""),
-		);
+		searchEngine = routes.find(
+			(route) => route.t === DEFAULT_ROUTE.replaceAll(DEFAULT_PREFIX, ""),
+		);	
 	}
 
 	let processedQuery = cleanQuery(query, route);

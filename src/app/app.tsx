@@ -12,6 +12,9 @@ import { toast } from "sonner";
 function App() {
 	const { install, uninstall, status } = useServiceWorker({
 		swPath: "./sw.js",
+		options: {
+			type: "module",
+		},
 	});
 	const [url, setUrl] = useState<string>(`${window.location.href}?q=%s`);
 	const [geminiApikey, setGeminiApikey] = useState<string>("");
@@ -110,7 +113,7 @@ function App() {
 					</div>
 
 					<div className="border border-dashed border-neutral-300 rounded-lg p-6 bg-white">
-						<h2 className="text-xl mb-6">AI Integration</h2>
+						<h2 className="text-xl mb-6">AI Integration (Experimental)</h2>
 
 						<p className="text-neutral-700">
 							routr can optimize your search queries using AI. This feature
