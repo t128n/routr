@@ -56,8 +56,8 @@ async function handleRequest(request) {
 		processedQuery = await optimizeQuery(processedQuery, request.url);
 	}
 
-	const searchUrl = searchEngine.u.replace(
-		"%s",
+	const searchUrl = searchEngine.u.replaceAll(
+		"{{{s}}}",
 		encodeURIComponent(processedQuery),
 	);
 
