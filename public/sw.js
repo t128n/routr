@@ -17,8 +17,6 @@ self.addEventListener("install", () => {
  * @param {FetchEvent} event
  */
 self.addEventListener("fetch", (event) => {
-	console.log(routes);
-
 	// Only intercept requests with a query parameter
 	if (!isRequestRelevant(event.request)) return fetch(event.request);
 
