@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Routr</ShortName>
+  <Description>Route searches via Routr (local bang-style)</Description>
+  <Tags>bang router search</Tags>
+  <Contact>t128n@ipv4.8shield.net</Contact>
+
+  <Url type="text/html"
+       method="GET"
+       template="https://t128n.github.io/routr/?q={searchTerms}"/>
+
+  <!-- 16×16 or 64×64, your favicon or a dedicated icon -->
+  <Image height="16" width="16" type="image/svg">
+    https://t128n.github.io/routr/favicon.svg
+  </Image>
+
+  <Query role="example" searchTerms="!g cats" />
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+</OpenSearchDescription>
