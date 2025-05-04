@@ -43,7 +43,7 @@ export const DEFAULTS: DefaultValues = {
 
 7. **Fail-Safe**  
 - If no enhancement is possible, echo the original query unchanged—but still on one line.`,
-	"ai.gemini.model": "gemini-2.5-flash",
+	"ai.gemini.model": "gemini-2.0-flash",
 };
 
 export type StoreKey = keyof DefaultValues;
