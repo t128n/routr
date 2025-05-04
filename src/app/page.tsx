@@ -134,6 +134,7 @@ export default function App() {
 							<div className="flex flex-col gap-2">
 								<Label>Gemini API Model</Label>
 								<Input
+									readOnly
 									placeholder="Enter your model..."
 									value={geminiModel}
 									type="text"
@@ -143,6 +144,7 @@ export default function App() {
 							<div className="flex flex-col gap-2">
 								<Label>Gemini API Prompt</Label>
 								<Textarea
+									readOnly
 									placeholder="Enter your prompt..."
 									value={geminiPrompt}
 									onChange={(e) => setGeminiPrompt(e.target.value)}
