@@ -1,5 +1,3 @@
-// This file has been retrieved from https://duckduckgo.com/bang.js
-
 export default [
   {
     c: "Tech",
