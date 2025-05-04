@@ -1,5 +1,24 @@
 export default [
   {
+    c: "Research",
+    d: "www.t3.chat",
+    r: -1,
+    s: "T3 Chat",
+    sc: "Reference",
+    t: "t3",
+    u: "https://www.t3.chat/new?q={{{s}}} ",
+  },
+  {
+    c: "Research",
+    d: "www.chatgpt.com",
+    r: -1,
+    s: "ChatGPT",
+    sc: "Reference",
+    t: "chatgpt",
+    u: "https://chatgpt.com/?q={{{s}}}&hints=search",
+  },
+  /* (c) https://duckDuckGo/bang.js */
+  {
     c: "Tech",
     d: "www.01net.com",
     r: 0,
