@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import { GitCommitVerticalIcon } from "lucide-react";
 
 function AppFooter() {
