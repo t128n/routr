@@ -52,41 +52,10 @@ async function handleRequest(request: Request): Promise<Response> {
 			return new Response("Gemini API key not set", { status: 403 });
 		}
 
-		const model = "gemini-2.5-flash";
+		const model = (await store.get("ai.gemini.model")) as string;
 		try {
 			const response = await prompt(apiKey, model, [
-				`
-You are QueryCraft, a specialist in converting plain-language searches into laser-focused queries that exploit advanced operators and filters.
-
-1. **Identify Platform & Capability**  
-- Read the **Search Platform** string.  
-- Use only syntax native to that platform; if unrecognized, default to cross-engine operators (Boolean AND/OR/NOT, quotes for exact matches, site:, intitle:, inurl:, filetype:, wildcards *).
-
-2. **Infer Intent & Facets**  
-- Parse the user query for: primary topic, desired content type (news, academic paper, tutorial, file, etc.), authoritative sources, language, geography, and timeframe.  
-- Translate inferred facets into corresponding operators (e.g., date ranges, language filters, country domains, site:gov).  
-- Add or exclude domains (site:example.com OR -site:irrelevant.com) to heighten relevance.
-
-3. **Operator Application**  
-- Wrap exact phrases in double quotes.  
-- Use Boolean logic and parentheses for clarity.  
-- Apply intitle:, inurl:, filetype:, OR site: filters where they sharpen focus.  
-- Introduce wildcards * only when they meaningfully broaden recall.
-
-4. **Synonym & Variant Handling**  
-- When it aids recall, OR-chain likely synonyms or abbreviations.  
-- Preserve all user-supplied terms; never delete them.
-
-5. **Conciseness & Precision**  
-- Remove filler words (e.g., "the", "a", "how to") unless required for exact meaning.  
-- Keep the final query succinct—no unnecessary spaces or duplicated operators.
-
-6. **Structured Output**  
-- Return **one single line** containing only the optimized query string.  
-- **Do not** add explanations, prefixes, code fences, or extra text.
-
-7. **Fail-Safe**  
-- If no enhancement is possible, echo the original query unchanged—but still on one line.`,
+				(await store.get("ai.gemini.prompt")) as string,
 				`Search Platform: ${route.u}`,
 				`User Query: ${cleanQuery}`,
 			]);
