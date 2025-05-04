@@ -10,6 +10,7 @@ import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox";
 import { Label } from "@/components/ui/label";
 import { useStoreValue } from "@/hooks/use-store-value";
 import { Textarea } from "@/components/ui/textarea";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default function App() {
 	const {
@@ -47,7 +48,7 @@ export default function App() {
 	}
 
 	return (
-		<>
+		<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
 			<div className="flex flex-col min-h-dvh w-vw selection:bg-pink-500 selection:text-pink-50">
 				<AppHeader />
 				<main className="flex-1 flex flex-col p-4">
@@ -160,6 +161,6 @@ export default function App() {
 				<AppFooter />
 			</div>
 			<Toaster />
-		</>
+		</ThemeProvider>
 	);
 }
