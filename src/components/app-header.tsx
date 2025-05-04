@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/theme-toggle";
 import { SplitIcon } from "lucide-react";
 
 function AppHeader() {
@@ -7,6 +8,9 @@ function AppHeader() {
 				<div className="flex items-center gap-2">
 					<SplitIcon className="w-4 h-4" />
 					<h1 className="text-xl font-semibold">routr</h1>
+				</div>
+				<div className="flex items-center">
+					<ThemeToggle />
 				</div>
 			</div>
 		</header>
