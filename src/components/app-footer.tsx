@@ -1,16 +1,22 @@
-import { ThemeToggle } from "@/components/theme-toggle";
-
-export function AppFooter() {
+function AppFooter() {
 	return (
-		<footer className="w-full py-4 border-t border-dashed border-neutral-300 dark:border-neutral-600 flex justify-center">
-			<div className="max-w-[120ch] w-full px-4">
-				<div className="flex justify-between">
-					<p className="text-neutral-500 text-sm">
-						routr &middot; search engine router
+		<footer className="p-4 border-t border-dashed">
+			<div className="flex items-center justify-between w-content mx-auto">
+				<div className="flex items-center">
+					<p className="text-sm flex items-center gap-1">
+						<span>&copy; 2025 Torben Haack</span>
+						<span>&lt;t128n@ipv4.8shield.net&gt;</span>
 					</p>
-					<ThemeToggle />
+				</div>
+				<div className="flex items-center">
+					<p className="text-sm flex items-center gap-1">
+						<span>v{import.meta.env.PACKAGE_VERSION}</span>
+						<span>&lt;{import.meta.env.BUILD_TIME}&gt;</span>
+					</p>
 				</div>
 			</div>
 		</footer>
 	);
 }
+
+export { AppFooter };

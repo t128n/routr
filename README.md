@@ -1,85 +1,34 @@
-# routr
+# routr &middot; search engine router
 
-> A powerful browser search engine router with AI query optimization capabilities (Proof of Concept)
-
-Routr is a web application that enhances your search experience by providing quick shortcuts to different search engines and optimizing your search queries using AI. It works as a service worker that intercepts and redirects your search queries based on predefined prefixes.
-
-![routr Web screenshot](./docs/web-screenshot.png)
+`routr` is a simple and fast search engine router. Using [DuckDuckGo Bangs](https://duckduckgo.com/bangs) syntax, you can search any website directly from within your browser - but completely offline.
 
 ## Features
-
-- **Search Engine Routing**: Quickly switch between search engines using prefixes (e.g., `!g` for Google, `!ddg` for DuckDuckGo)
-- **AI Query Optimization**: Enhance your search queries with Google's Gemini AI for more effective results
-- **Lightweight**: Runs as a service worker in your browser with minimal overhead
-- **Privacy-Focused**: Your API keys remain in your browser and are only used for API requests
-- **Easy Installation**: Simple one-click installation process
+- Fast and lightweight
+- Simple and easy to use
+- Supports DuckDuckGo Bangs syntax
+- Optional AI integration
 
 ## Installation
 
-1. Visit the Routr web application
-2. Click the "Install" button
-3. Add the provided URL as a search engine in your browser settings
+To start using `routr`, you just need to visit [t128n/routr](https://t128n.github.io/routr/) and add it as your default search engine.
 
 ## Usage
 
-### Basic Search Routing
+Now you can search any website directly from your browser. Just type your search query in the address bar and put a "bang" (or route, how we call it) somwhere in the query. For example, to search for "hello world" on the German Wikipedia, you would type:
 
-Use prefixes to route your searches to different engines:
-
-- `!g search term` - Search on Google
-- `!ddg search term` - Search on DuckDuckGo
-- `!b search term` - Search on Bing
-- `!yt search term` - Search on YouTube
-- `!w search term` - Search on Wikipedia
-
-If no prefix is provided, the search defaults to Google.
-
-### AI-Enhanced Search
-
-Double prefix enables AI optimization of your search query:
-
-- `!!g complex search query` - Optimize and search on Google
-- `!!ddg complex search query` - Optimize and search on DuckDuckGo
-
-To use the AI optimization feature:
-
-1. Obtain a Google AI Studio API key from [Google AI Studio](https://aistudio.google.com/)
-2. Enter your API key in the Routr settings
-3. Use the double prefix syntax for your searches
-
-## Development
-
-```bash
-# Install dependencies
-bun install
-
-# Start development server
-bun run dev
-
-# Build for production
-bun run build
+```
+hello !dewiki world
 ```
 
-## Technologies
+After configuring your Gemini API Key, you can make use of the AI query optimization
+and transform your query from:
 
-- React 19
-- Vite
-- TypeScript
-- Tailwind CSS
-- Service Workers
-- Google Gemini API
+```
+article about german war in the stone age !!g
+```
 
-## Privacy
+to:
 
-Routr takes your privacy seriously:
-- Your API key never leaves your browser except to make requests to the Google Gemini API
-- No data is collected about your search queries
-- No cookies or tracking mechanisms are implemented
-
-> [!Warning]
-> While Routr does not collect data, please be aware that the search engines and the Gemini API you use may track your searches. Always check the privacy policies of the search engines you use.
-
-## Disclaimer
-
-This is a proof of concept project and may not be suitable for production use.
-
+```
+site:de.wikipedia.org "german" AND "war" AND "stone age" 
+```
