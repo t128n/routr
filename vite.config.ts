@@ -13,9 +13,12 @@ export default defineConfig({
 		react(),
 		tailwindcss(),
 		VitePWA({
-			srcDir: "src",
-			filename: "sw/worker.ts",
+			srcDir: "src/sw",
+			filename: "worker.ts",
 			strategies: "injectManifest",
+			injectManifest: {
+				maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10MB
+			},
 			registerType: "autoUpdate",
 			devOptions: {
 				enabled: true,
