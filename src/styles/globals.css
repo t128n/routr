@@ -166,5 +166,6 @@
 }
 
 .w-content {
-  width: 120ch;
+  max-width: 120ch;
+  width: 100%;
 }
