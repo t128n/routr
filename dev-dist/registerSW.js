@@ -1,1 +1,0 @@
-if('serviceWorker' in navigator) navigator.serviceWorker.register('/routr/dev-sw.js?dev-sw', { scope: '/routr/', type: 'module' })
