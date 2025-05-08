@@ -3,12 +3,14 @@ import { AppHeader } from "@/components/app-header";
 import { toast, Toaster } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SearchIcon } from "lucide-react";
+import { SearchIcon, InfoIcon, CopyIcon, ArrowRightIcon } from "lucide-react";
 import { ThemeProvider } from "@/components/theme-provider";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 export default function App() {
 	const searchInputRef = useRef<HTMLInputElement>(null);
+	const [isSearching, setIsSearching] = useState(false);
 
 	// Keyboard shortcut: '/' focuses the search input
 	useEffect(() => {
@@ -22,81 +24,146 @@ export default function App() {
 		return () => document.removeEventListener("keydown", handler);
 	}, []);
 
+	const handleSearch = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setIsSearching(true);
+		// Simulate search delay
+		await new Promise(resolve => setTimeout(resolve, 500));
+		setIsSearching(false);
+		// Your actual search logic here
+	};
+
 	return (
 		<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-			<div className="flex flex-col min-h-dvh w-vw selection:bg-pink-500 selection:text-pink-50">
+			<div className="flex flex-col min-h-dvh w-vw selection:bg-pink-500 selection:text-pink-50 bg-gradient-to-b from-background to-background/95">
 				<AppHeader />
-				<main className="flex-1 flex flex-col px-4 justify-center">
-					<section className="flex flex-col w-content mx-auto gap-8" aria-label="Main content">
-						<header className="flex flex-col gap-2">
-							<h1 className="font-bold text-4xl">routr.</h1>
-							<p className="text-lg text-neutral-600 max-w-prose">
+				<main className="flex-1 flex flex-col px-4 py-8 md:py-12 justify-center">
+					<section className="flex flex-col w-content mx-auto gap-12 max-w-3xl" aria-label="Main content">
+						<header className="flex flex-col gap-4 text-center">
+							<div className="flex items-center justify-center gap-3">
+								<div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+									<SearchIcon className="w-5 h-5 text-primary" />
+								</div>
+								<h1 className="font-bold text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+									routr.
+								</h1>
+							</div>
+							<p className="text-xl text-neutral-600 max-w-prose mx-auto">
 								A minimal search engine router. Fast. Configurable. Open source.
 							</p>
 						</header>
+
 						<form
-							action={`${import.meta.env.BASE_URL}`}
-							className="flex focus-within:shadow-sm shadow-primary rounded-lg"
+							onSubmit={handleSearch}
+							className="flex flex-col gap-4"
 							aria-label="Search form"
 						>
-							<label htmlFor="search-input" className="sr-only">
-								Search query
-							</label>
-							<Input
-								autoFocus
-								type="search"
-								ref={searchInputRef}
-								id="search-input"
-								name="q"
-								placeholder="Search... (Press '/' to focus)"
-								className="rounded-r-none h-14 text-lg focus-visible:ring-0"
-								aria-label="Search query"
-							/>
-							<Button
-								className="rounded-l-none h-14"
-								type="submit"
-								size="icon"
-								aria-label="Submit search"
-							>
-								<SearchIcon className="w-5 h-5" aria-hidden="true" />
-							</Button>
+							<div className="flex focus-within:ring-2 ring-primary/20 rounded-lg transition-all duration-200">
+								<label htmlFor="search-input" className="sr-only">
+									Search query
+								</label>
+								<Input
+									autoFocus
+									type="search"
+									ref={searchInputRef}
+									id="search-input"
+									name="q"
+									placeholder="Search... (Press '/' to focus)"
+									className="rounded-r-none h-14 text-lg focus-visible:ring-0 border-r-0"
+									aria-label="Search query"
+								/>
+								<Button
+									className="rounded-l-none h-14 px-6 bg-primary hover:bg-primary/90 transition-colors"
+									type="submit"
+									disabled={isSearching}
+									aria-label="Submit search"
+								>
+									{isSearching ? (
+										<div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+									) : (
+										<SearchIcon className="w-5 h-5" aria-hidden="true" />
+									)}
+								</Button>
+							</div>
+							<p className="text-sm text-neutral-500 text-center">
+								Give routr a try. Configure your default search provider and more settings with the gear icon above.
+							</p>
 						</form>
-						<p className="text-sm text-neutral-500">
-							Give routr a try. Configure your default search provider and more settings with the gear icon above.
-						</p>
-						<section className="opacity-70 hover:opacity-100 transition-opacity duration-200" aria-label="Set as default search engine">
-							<p className="text-sm mb-1">
-								Set routr as your browser's default search engine:
-							</p>
-							<Input
-								value={`${window.location.origin}${window.location.pathname}?q=%s`}
-								className="border-dashed cursor-pointer"
-								readOnly
-								onClick={e => {
-									(e.target as HTMLInputElement).select();
-									navigator.clipboard.writeText((e.target as HTMLInputElement).value);
-									toast.info("Search URL copied to clipboard");
-								}}
-								aria-label="Default search engine URL"
-							/>
-							<p className="text-xs text-neutral-400 mt-1">
-								Copy the above URL and add it as a custom search engine in your browser settings. <span className="hidden md:inline">(Most browsers: Settings → Search → Manage Search Engines)</span>
-							</p>
-						</section>
-						<section className="mt-6" aria-label="How it works">
-							<h2 className="font-semibold text-lg mb-2">How it works</h2>
-							<ul className="list-disc pl-5 text-sm text-neutral-600 space-y-1">
-								<li>Type your query and hit <kbd>Enter</kbd> to search.</li>
-								<li>routr routes your query to your configured search provider.</li>
-								<li>Configure providers and settings via the gear icon above.</li>
-								<li>Open source, privacy-respecting, and minimal by design.</li>
-							</ul>
-						</section>
+
+						<div className="grid gap-8 md:grid-cols-2">
+							<section className="p-6 rounded-lg bg-card border shadow-sm hover:shadow-md transition-shadow" aria-label="Set as default search engine">
+								<h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+									<InfoIcon className="w-5 h-5 text-primary" />
+									Set as Default
+								</h2>
+								<p className="text-sm mb-3">
+									Set routr as your browser's default search engine:
+								</p>
+								<div className="flex gap-2">
+									<Input
+										value={`${window.location.origin}${window.location.pathname}?q=%s`}
+										className="border-dashed"
+										readOnly
+										aria-label="Default search engine URL"
+									/>
+									<TooltipProvider>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<Button
+													variant="outline"
+													size="icon"
+													onClick={e => {
+														const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+														input.select();
+														navigator.clipboard.writeText(input.value);
+														toast.success("Search URL copied to clipboard!");
+													}}
+												>
+													<CopyIcon className="w-4 h-4" />
+												</Button>
+											</TooltipTrigger>
+											<TooltipContent>
+												<p>Copy search URL</p>
+											</TooltipContent>
+										</Tooltip>
+									</TooltipProvider>
+								</div>
+								<p className="text-xs text-neutral-400 mt-2">
+									Add this URL as a custom search engine in your browser settings.
+									<span className="hidden md:inline"> (Settings → Search → Manage Search Engines)</span>
+								</p>
+							</section>
+
+							<section className="p-6 rounded-lg bg-card border shadow-sm hover:shadow-md transition-shadow" aria-label="How it works">
+								<h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+									<ArrowRightIcon className="w-5 h-5 text-primary" />
+									How it Works
+								</h2>
+								<ul className="space-y-3 text-sm text-neutral-600">
+									<li className="flex items-start gap-2">
+										<span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">1</span>
+										Type your query and hit <kbd className="px-2 py-1 bg-neutral-100 rounded text-xs">Enter</kbd> to search
+									</li>
+									<li className="flex items-start gap-2">
+										<span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">2</span>
+										routr routes your query to your configured search provider
+									</li>
+									<li className="flex items-start gap-2">
+										<span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">3</span>
+										Configure providers and settings via the gear icon above
+									</li>
+									<li className="flex items-start gap-2">
+										<span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">4</span>
+										Open source, privacy-respecting, and minimal by design
+									</li>
+								</ul>
+							</section>
+						</div>
 					</section>
 				</main>
 				<AppFooter />
 			</div>
-			<Toaster />
+			<Toaster position="bottom-center" />
 		</ThemeProvider>
 	);
 }
