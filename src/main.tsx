@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { registerSW } from "virtual:pwa-register";
 
-import App from "@/app/page";
+import { Router } from "@/app/index";
 import "@/styles/globals.css";
 import { toast } from "sonner";
 
@@ -12,7 +12,7 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
 	createRoot(rootElement).render(
 		<StrictMode>
-			<App />
+			<Router />
 		</StrictMode>,
 	);
 }
@@ -20,7 +20,7 @@ if (rootElement) {
 registerSW({
 	onNeedRefresh() {
 		toast("New content available, click on the icon to refresh.");
-		/* show “update available” UI */
+		/* show "update available" UI */
 	},
 	onRegisterError() {
 		toast.error(

@@ -16,6 +16,9 @@ import routes from "@/sw/routes";
 import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 function Settings() {
 	const [showApiKey, setShowApiKey] = useState(false);
@@ -205,17 +208,36 @@ function Settings() {
 											<InfoIcon className="w-4 h-4 text-muted-foreground cursor-help" />
 										</HoverCardTrigger>
 										<HoverCardContent>
-											<p>The system prompt that guides the AI's behavior. This helps shape how the AI responds to your queries.</p>
+											<p>Der System Prompt unterstützt Markdown-Formatierung für bessere Lesbarkeit und Strukturierung.</p>
 										</HoverCardContent>
 									</HoverCard>
 								</div>
-								<Textarea
-									id="prompt"
-									placeholder="Enter your system prompt..."
-									value={geminiPrompt}
-									onChange={(e) => setGeminiPrompt(e.target.value)}
-									className="min-h-[100px]"
-								/>
+								<Tabs defaultValue="edit" className="w-full">
+									<TabsList className="mb-2">
+										<TabsTrigger value="edit">Bearbeiten</TabsTrigger>
+										<TabsTrigger value="preview">Vorschau</TabsTrigger>
+									</TabsList>
+									<TabsContent value="edit" className="mt-0">
+										<Textarea
+											id="prompt"
+											placeholder="Geben Sie Ihren System Prompt ein (unterstützt Markdown-Formatierung)..."
+											value={geminiPrompt}
+											onChange={(e) => setGeminiPrompt(e.target.value)}
+											className="min-h-[300px] font-mono text-sm"
+										/>
+									</TabsContent>
+									<TabsContent value="preview" className="mt-0">
+										<div className="border rounded-md p-4 min-h-[300px] overflow-auto prose prose-sm dark:prose-invert max-w-none">
+											{geminiPrompt ? (
+												<ReactMarkdown remarkPlugins={[remarkGfm]}>
+													{geminiPrompt}
+												</ReactMarkdown>
+											) : (
+												<p className="text-muted-foreground italic">Keine Vorschau verfügbar. Bitte geben Sie einen System Prompt ein.</p>
+											)}
+										</div>
+									</TabsContent>
+								</Tabs>
 							</div>
 						</div>
 					</section>
