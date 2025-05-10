@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox";
 import { useStoreValue } from "@/hooks/use-store-value";
 import routes from "@/sw/routes";
-import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon } from "lucide-react";
+import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, Eye } from "lucide-react";
 import { useState } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -212,30 +212,53 @@ function Settings() {
 										</HoverCardContent>
 									</HoverCard>
 								</div>
-								<Tabs defaultValue="edit" className="w-full">
+								<Tabs defaultValue="markdown" className="w-full">
 									<TabsList className="mb-2">
-										<TabsTrigger value="edit">Edit</TabsTrigger>
-										<TabsTrigger value="preview">Preview</TabsTrigger>
+										<TabsTrigger value="markdown" className="flex items-center gap-1">
+											<Eye className="w-4 h-4" />
+											<span>Markdown Editor</span>
+										</TabsTrigger>
+										<TabsTrigger value="raw" className="flex items-center gap-1">
+											<Code className="w-4 h-4" />
+											<span>Raw Prompt</span>
+										</TabsTrigger>
 									</TabsList>
-									<TabsContent value="edit" className="mt-0">
+									<TabsContent value="markdown" className="mt-0">
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+											<div className="space-y-2">
+												<div className="flex justify-between items-center">
+													<Label htmlFor="prompt-editor" className="text-sm font-medium">Editor</Label>
+												</div>
+												<Textarea
+													id="prompt-editor"
+													placeholder="Enter your system prompt with Markdown formatting..."
+													value={geminiPrompt}
+													onChange={(e) => setGeminiPrompt(e.target.value)}
+													className="min-h-[400px] font-mono text-sm"
+												/>
+											</div>
+											<div className="space-y-2">
+												<Label className="text-sm font-medium">Preview</Label>
+												<div className="border rounded-md p-4 min-h-[400px] overflow-auto prose prose-sm dark:prose-invert max-w-none">
+													{geminiPrompt ? (
+														<ReactMarkdown remarkPlugins={[remarkGfm]}>
+															{geminiPrompt}
+														</ReactMarkdown>
+													) : (
+														<p className="text-muted-foreground italic">No preview available. Please enter a system prompt.</p>
+													)}
+												</div>
+											</div>
+										</div>
+									</TabsContent>
+									<TabsContent value="raw" className="mt-0">
 										<Textarea
-											id="prompt"
-											placeholder="Enter your system prompt (supports Markdown formatting)..."
+											id="prompt-raw"
+											placeholder="Enter your system prompt..."
 											value={geminiPrompt}
 											onChange={(e) => setGeminiPrompt(e.target.value)}
-											className="min-h-[300px] font-mono text-sm"
+											className="min-h-[400px] font-mono text-sm"
 										/>
-									</TabsContent>
-									<TabsContent value="preview" className="mt-0">
-										<div className="border rounded-md p-4 min-h-[300px] overflow-auto prose prose-sm dark:prose-invert max-w-none">
-											{geminiPrompt ? (
-												<ReactMarkdown remarkPlugins={[remarkGfm]}>
-													{geminiPrompt}
-												</ReactMarkdown>
-											) : (
-												<p className="text-muted-foreground italic">No preview available. Please enter a system prompt.</p>
-											)}
-										</div>
 									</TabsContent>
 								</Tabs>
 							</div>
