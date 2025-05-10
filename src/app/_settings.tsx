@@ -13,16 +13,75 @@ import { Textarea } from "@/components/ui/textarea";
 import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox";
 import { useStoreValue } from "@/hooks/use-store-value";
 import routes from "@/sw/routes";
-import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, Eye, FileText } from "lucide-react";
+import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, Eye, FileText, ChevronDown, ChevronUp, SaveIcon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { 
+	Command, 
+	CommandEmpty, 
+	CommandGroup, 
+	CommandInput, 
+	CommandItem,
+	CommandList 
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
+// Definiere die verfügbaren Gemini-Modelle
+const geminiModels = [
+	{
+		value: "gemini-2.5-pro-preview-05-06",
+		label: "Gemini 2.5 Pro Preview (05-06)",
+		description: "Enhanced thinking and reasoning, multimodal understanding, advanced coding"
+	},
+	{
+		value: "gemini-2.5-flash-preview-04-17",
+		label: "Gemini 2.5 Flash Preview (04-17)",
+		description: "Adaptive thinking, cost efficiency"
+	},
+	{
+		value: "gemini-2.0-flash",
+		label: "Gemini 2.0 Flash",
+		description: "Next generation features, speed, thinking, and realtime streaming"
+	},
+	{
+		value: "gemini-2.0-flash-preview-image-generation",
+		label: "Gemini 2.0 Flash Image Generation",
+		description: "Conversational image generation and editing"
+	},
+	{
+		value: "gemini-2.0-flash-lite",
+		label: "Gemini 2.0 Flash-Lite",
+		description: "Cost efficiency and low latency"
+	},
+	{
+		value: "gemini-1.5-flash",
+		label: "Gemini 1.5 Flash",
+		description: "Fast and versatile performance across diverse tasks"
+	},
+	{
+		value: "gemini-1.5-pro",
+		label: "Gemini 1.5 Pro",
+		description: "Complex reasoning tasks requiring more intelligence"
+	},
+	{
+		value: "gemini-1.5-flash-8b",
+		label: "Gemini 1.5 Flash-8B",
+		description: "High volume and lower intelligence tasks"
+	},
+];
 
 function Settings() {
 	const [showApiKey, setShowApiKey] = useState(false);
 	const [isMobile, setIsMobile] = useState(false);
+	const [open, setOpen] = useState(false);
+	const [selectedModel, setSelectedModel] = useState("");
+	const [customModelName, setCustomModelName] = useState("");
+	const [isSaving, setIsSaving] = useState(false);
 	
 	// Detect if screen is mobile size
 	useEffect(() => {
@@ -64,12 +123,49 @@ function Settings() {
 		reset: resetGeminiModel,
 	} = useStoreValue("ai.gemini.model");
 
+	// Setze den initialen Wert für das ausgewählte Modell, wenn geminiModel existiert
+	useEffect(() => {
+		if (geminiModel) {
+			const foundModel = geminiModels.find(model => model.value === geminiModel);
+			if (foundModel) {
+				setSelectedModel(geminiModel);
+			} else {
+				setCustomModelName(geminiModel);
+			}
+		}
+	}, [geminiModel]);
+
+	// Handler für die Modell-Änderung
+	const handleModelChange = (value: string) => {
+		setSelectedModel(value);
+		setGeminiModel(value);
+	};
+
+	// Handler für benutzerdefinierte Modell-Eingabe
+	const handleCustomModelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		setCustomModelName(value);
+		setGeminiModel(value);
+	};
+
 	function handleReset() {
 		resetRouteIndicator();
 		resetDefaultRoute();
 		resetGeminiApiKey();
 		resetGeminiPrompt();
 		resetGeminiModel();
+		setSelectedModel("");
+		setCustomModelName("");
+	}
+
+	function handleSave() {
+		setIsSaving(true);
+		
+		// Simuliere eine Speicheroperation
+		setTimeout(() => {
+			setIsSaving(false);
+			toast.success("Settings saved successfully");
+		}, 600);
 	}
 
 	return (
@@ -214,16 +310,62 @@ function Settings() {
 												<InfoIcon className="w-4 h-4 text-muted-foreground cursor-help" />
 											</HoverCardTrigger>
 											<HoverCardContent className="w-80">
-												<p>The Gemini model to use (e.g., 'gemini-pro'). Check Google AI Studio for available models.</p>
+												<p>The Gemini model to use. Select from available models or enter a custom model name.</p>
 											</HoverCardContent>
 										</HoverCard>
 									</div>
-									<Input
-										id="model"
-										placeholder="e.g., gemini-pro"
-										value={geminiModel}
-										onChange={(e) => setGeminiModel(e.target.value)}
-									/>
+									<div className="flex flex-col gap-1.5">
+										<Popover open={open} onOpenChange={setOpen}>
+											<PopoverTrigger asChild>
+												<Button
+													variant="outline"
+													role="combobox"
+													aria-expanded={open}
+													className="justify-between w-full text-left font-normal"
+												>
+													{selectedModel ? geminiModels.find(model => model.value === selectedModel)?.label : customModelName || "Select model..."}
+													{open ? <ChevronUp className="ml-2 h-4 w-4 shrink-0 opacity-50" /> : <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
+												</Button>
+											</PopoverTrigger>
+											<PopoverContent className="p-0 w-full" align="start">
+												<Command>
+													<CommandInput placeholder="Search model..." />
+													<CommandList>
+														<CommandEmpty>No model found.</CommandEmpty>
+														<CommandGroup heading="Gemini Models">
+															{geminiModels.map((model) => (
+																<CommandItem
+																	key={model.value}
+																	value={model.value}
+																	onSelect={() => {
+																		handleModelChange(model.value);
+																		setCustomModelName("");
+																		setOpen(false);
+																	}}
+																	className="flex flex-col items-start py-2"
+																>
+																	<div className="font-medium">{model.label}</div>
+																	<div className="text-xs text-muted-foreground">{model.description}</div>
+																</CommandItem>
+															))}
+														</CommandGroup>
+													</CommandList>
+												</Command>
+											</PopoverContent>
+										</Popover>
+										<div className="relative">
+											<Label htmlFor="custom-model" className="text-xs text-muted-foreground mb-1 block">
+												Or enter custom model name:
+											</Label>
+											<Input
+												id="custom-model"
+												placeholder="e.g., gemini-custom-model"
+												value={customModelName}
+												onChange={handleCustomModelChange}
+												className="text-sm"
+											/>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div className="space-y-2">
@@ -293,14 +435,30 @@ function Settings() {
 
 					{/* Reset Button */}
 					<div className="pt-4 border-t flex justify-between items-center">
-						<Button
-							variant="destructive"
-							onClick={handleReset}
-							className="gap-2"
-						>
-							<RotateCwIcon className="w-4 h-4" />
-							<span>Reset All Settings</span>
-						</Button>
+						<div className="flex gap-3">
+							<Button
+								variant="destructive"
+								onClick={handleReset}
+								className="gap-2"
+							>
+								<RotateCwIcon className="w-4 h-4" />
+								<span>Reset All Settings</span>
+							</Button>
+							
+							<Button
+								variant="default"
+								onClick={handleSave}
+								className="gap-2"
+								disabled={isSaving}
+							>
+								{isSaving ? (
+									<div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+								) : (
+									<SaveIcon className="w-4 h-4" />
+								)}
+								<span>Save</span>
+							</Button>
+						</div>
 						
 						<p className="text-xs text-muted-foreground">
 							routr version 0.1.4
