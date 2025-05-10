@@ -208,19 +208,19 @@ function Settings() {
 											<InfoIcon className="w-4 h-4 text-muted-foreground cursor-help" />
 										</HoverCardTrigger>
 										<HoverCardContent>
-											<p>Der System Prompt unterstützt Markdown-Formatierung für bessere Lesbarkeit und Strukturierung.</p>
+											<p>The system prompt supports Markdown formatting for better readability and structure.</p>
 										</HoverCardContent>
 									</HoverCard>
 								</div>
 								<Tabs defaultValue="edit" className="w-full">
 									<TabsList className="mb-2">
-										<TabsTrigger value="edit">Bearbeiten</TabsTrigger>
-										<TabsTrigger value="preview">Vorschau</TabsTrigger>
+										<TabsTrigger value="edit">Edit</TabsTrigger>
+										<TabsTrigger value="preview">Preview</TabsTrigger>
 									</TabsList>
 									<TabsContent value="edit" className="mt-0">
 										<Textarea
 											id="prompt"
-											placeholder="Geben Sie Ihren System Prompt ein (unterstützt Markdown-Formatierung)..."
+											placeholder="Enter your system prompt (supports Markdown formatting)..."
 											value={geminiPrompt}
 											onChange={(e) => setGeminiPrompt(e.target.value)}
 											className="min-h-[300px] font-mono text-sm"
@@ -233,7 +233,7 @@ function Settings() {
 													{geminiPrompt}
 												</ReactMarkdown>
 											) : (
-												<p className="text-muted-foreground italic">Keine Vorschau verfügbar. Bitte geben Sie einen System Prompt ein.</p>
+												<p className="text-muted-foreground italic">No preview available. Please enter a system prompt.</p>
 											)}
 										</div>
 									</TabsContent>

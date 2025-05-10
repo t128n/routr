@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 
 import { registerSW } from "virtual:pwa-register";
 
-import { Router } from "@/app/index";
+import App from "@/app/page";
 import "@/styles/globals.css";
 import { toast } from "sonner";
 
@@ -12,7 +12,7 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
 	createRoot(rootElement).render(
 		<StrictMode>
-			<Router />
+			<App />
 		</StrictMode>,
 	);
 }
