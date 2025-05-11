@@ -3,14 +3,54 @@ import { AppHeader } from "@/components/app-header";
 import { toast, Toaster } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SearchIcon, InfoIcon, CopyIcon, ArrowRightIcon } from "lucide-react";
+import { SearchIcon, InfoIcon, CopyIcon, ArrowRightIcon, Sparkles, AlertCircle } from "lucide-react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { useRef, useEffect, useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { store } from "@/sw/store";
+import { Badge } from "@/components/ui/badge";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export default function App() {
 	const searchInputRef = useRef<HTMLInputElement>(null);
 	const [isSearching, setIsSearching] = useState(false);
+	const [searchValue, setSearchValue] = useState('');
+	const [aiEnabled, setAiEnabled] = useState<boolean | null>(null);
+	const [routeIndicator, setRouteIndicator] = useState('!');
+	const [searchPlaceholder, setSearchPlaceholder] = useState("Search... (Press '/' to focus)");
+	const [searchSuggestions, setSearchSuggestions] = useState<string[]>([
+		"best digital photography courses online",
+		"healthy meal prep ideas for busy professionals",
+		"most efficient workout routines for beginners",
+		"top rated science fiction books 2025",
+		"how to improve productivity working from home"
+	]);
+	
+	// On mount, check if AI is enabled
+	useEffect(() => {
+		const checkAiStatus = async () => {
+			try {
+				const apiKey = await store.get("ai.gemini.apiKey");
+				const indicator = await store.get("general.routeIndicator");
+				setRouteIndicator(indicator || '!');
+				setAiEnabled(Boolean(apiKey && apiKey.trim().length > 0));
+			} catch (error) {
+				console.error("Error checking AI status:", error);
+				setAiEnabled(false);
+			}
+		};
+		
+		checkAiStatus();
+	}, []);
+	
+	// Update placeholder based on AI status
+	useEffect(() => {
+		if (aiEnabled === true) {
+			setSearchPlaceholder(`Try "${routeIndicator}${routeIndicator}g how to learn piano" for AI-enhanced search`);
+		} else if (aiEnabled === false) {
+			setSearchPlaceholder("Search... (Press '/' to focus)");
+		}
+	}, [aiEnabled, routeIndicator]);
 
 	// Keyboard shortcut: '/' focuses the search input
 	useEffect(() => {
@@ -36,6 +76,15 @@ export default function App() {
 		} else {
 			setIsSearching(false);
 			toast.error("Please enter a search query");
+		}
+	};
+	
+	const applySuggestion = (suggestion: string) => {
+		if (searchInputRef.current) {
+			searchInputRef.current.value = aiEnabled 
+				? `${routeIndicator}${routeIndicator}g ${suggestion}` 
+				: suggestion;
+			searchInputRef.current.focus();
 		}
 	};
 
@@ -65,19 +114,61 @@ export default function App() {
 							aria-label="Search form"
 						>
 							<div className="flex focus-within:ring-2 ring-primary/20 rounded-lg transition-all duration-200">
-								<label htmlFor="search-input" className="sr-only">
-									Search query
-								</label>
-								<Input
-									autoFocus
-									type="search"
-									ref={searchInputRef}
-									id="search-input"
-									name="q"
-									placeholder="Search... (Press '/' to focus)"
-									className="rounded-r-none h-14 text-lg focus-visible:ring-0 border-r-0"
-									aria-label="Search query"
-								/>
+								<div className="relative flex-1">
+									<label htmlFor="search-input" className="sr-only">
+										Search query
+									</label>
+									<Input
+										autoFocus
+										type="search"
+										ref={searchInputRef}
+										id="search-input"
+										name="q"
+										placeholder={searchPlaceholder}
+										className="rounded-r-none h-14 text-lg focus-visible:ring-0 border-r-0 pr-10"
+										aria-label="Search query"
+										value={searchValue}
+										onChange={(e) => setSearchValue(e.target.value)}
+									/>
+									{aiEnabled !== null && (
+										<div className="absolute right-3 top-1/2 -translate-y-1/2">
+											<HoverCard>
+												<HoverCardTrigger asChild>
+													<div className="cursor-help">
+														{aiEnabled ? (
+															<Sparkles className="h-5 w-5 text-purple-500" />
+														) : (
+															<AlertCircle className="h-5 w-5 text-neutral-300" />
+														)}
+													</div>
+												</HoverCardTrigger>
+												<HoverCardContent className="w-80">
+													{aiEnabled ? (
+														<div className="flex items-start gap-2">
+															<Sparkles className="h-4 w-4 text-purple-500 mt-0.5" />
+															<div>
+																<p className="font-medium">AI-Enhanced Search Available</p>
+																<p className="text-sm text-muted-foreground mt-1">
+																	Use <code className="bg-purple-100 dark:bg-purple-900/50 px-1.5 py-0.5 rounded text-xs font-mono">{routeIndicator}{routeIndicator}g your query</code> for AI-enhanced search
+																</p>
+															</div>
+														</div>
+													) : (
+														<div className="flex items-start gap-2">
+															<AlertCircle className="h-4 w-4 text-neutral-500 mt-0.5" />
+															<div>
+																<p className="font-medium">AI Enhancement Not Available</p>
+																<p className="text-sm text-muted-foreground mt-1">
+																	Set up a Gemini API key in settings to enable AI-enhanced search
+																</p>
+															</div>
+														</div>
+													)}
+												</HoverCardContent>
+											</HoverCard>
+										</div>
+									)}
+								</div>
 								<Button
 									className="rounded-l-none h-14 px-6 bg-primary hover:bg-primary/90 transition-colors"
 									type="submit"
@@ -91,6 +182,24 @@ export default function App() {
 									)}
 								</Button>
 							</div>
+							
+							{/* AI-powered search suggestions */}
+							<div className="flex flex-wrap gap-2 justify-center mt-1">
+								{searchSuggestions.slice(0, 3).map((suggestion, index) => (
+									<button
+										key={index}
+										type="button"
+										onClick={() => applySuggestion(suggestion)}
+										className="flex items-center gap-1 text-xs py-1 px-3 rounded-full bg-background border border-neutral-200 hover:border-neutral-300 transition-colors"
+									>
+										{aiEnabled && (
+											<Sparkles className="w-3 h-3 text-purple-500" />
+										)}
+										<span className="truncate max-w-40">{suggestion}</span>
+									</button>
+								))}
+							</div>
+							
 							<p className="text-sm text-neutral-500 text-center">
 								Give routr a try. Configure your default search provider and more settings with the gear icon above.
 							</p>
@@ -156,7 +265,14 @@ export default function App() {
 									</li>
 									<li className="flex items-start gap-2">
 										<span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">3</span>
-										Configure providers and settings via the gear icon above
+										{aiEnabled ? (
+											<>Use <span className="inline-flex items-center gap-1">
+												<Sparkles className="w-3 h-3 text-purple-500" />
+												<code className="bg-neutral-100 px-1 py-0.5 rounded text-xs">{routeIndicator}{routeIndicator}g query</code>
+											</span> for AI-enhanced search</>
+										) : (
+											<>Configure providers and settings via the gear icon above</>
+										)}
 									</li>
 									<li className="flex items-start gap-2">
 										<span className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-xs font-medium text-primary">4</span>
