@@ -335,6 +335,9 @@ function Settings() {
 											</HoverCardTrigger>
 											<HoverCardContent className="w-80">
 												<p>Your Gemini API key for AI integration. Get one from the Google AI Studio.</p>
+												<p className="mt-2 text-xs text-muted-foreground">
+													Visit <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Google AI Studio</a> to create a free API key.
+												</p>
 											</HoverCardContent>
 										</HoverCard>
 									</div>
@@ -359,6 +362,64 @@ function Settings() {
 											)}
 										</Button>
 									</div>
+									<div className="flex items-center justify-between mt-2">
+										<Button 
+											size="sm" 
+											variant="outline" 
+											className="text-xs gap-1 h-8"
+											onClick={handleTestConnection}
+											disabled={isTestingConnection || !geminiApiKey.trim()}
+										>
+											{isTestingConnection ? (
+												<>
+													<div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+													<span>Testing...</span>
+												</>
+											) : (
+												<>
+													{connectionTestResult ? (
+														connectionTestResult.success ? (
+															<CheckCircle2 className="w-3 h-3 text-green-500" />
+														) : (
+															<XCircle className="w-3 h-3 text-red-500" />
+														)
+													) : (
+														<AlertCircle className="w-3 h-3" />
+													)}
+													<span>Test Connection</span>
+												</>
+											)}
+										</Button>
+										
+										{connectionTestResult && (
+											<Badge 
+												variant={connectionTestResult.success ? "success" : "destructive"}
+												className="ml-2 text-xs py-0 px-2 h-6"
+											>
+												{connectionTestResult.success ? "Connected" : "Failed"}
+											</Badge>
+										)}
+									</div>
+									
+									{connectionTestResult && !connectionTestResult.success && (
+										<Alert variant="destructive" className="mt-2 text-xs p-3">
+											<AlertCircle className="h-4 w-4" />
+											<AlertTitle>Connection Error</AlertTitle>
+											<AlertDescription>
+												{connectionTestResult.message}
+											</AlertDescription>
+										</Alert>
+									)}
+									
+									{connectionTestResult && connectionTestResult.success && (
+										<Alert variant="success" className="mt-2 text-xs p-3">
+											<CheckCircle2 className="h-4 w-4" />
+											<AlertTitle>Connected Successfully</AlertTitle>
+											<AlertDescription>
+												Your API key and model are working correctly.
+											</AlertDescription>
+										</Alert>
+									)}
 								</div>
 								<div className="space-y-2">
 									<div className="flex items-center gap-2">
@@ -488,6 +549,60 @@ function Settings() {
 										/>
 									</TabsContent>
 								</Tabs>
+							</div>
+						</div>
+					</section>
+
+					{/* AI Testing Guide */}
+					<section className="space-y-4 sm:space-y-6 p-4 rounded-lg border bg-card/50 shadow-sm">
+						<div>
+							<h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
+								<AlertCircle className="w-4 h-4" />
+								How to Test AI Integration
+							</h2>
+							<p className="text-sm text-muted-foreground mb-4">
+								Follow these steps to test the Gemini AI functionality in your searches.
+							</p>
+						</div>
+						<div className="space-y-6">
+							<div className="grid gap-4">
+								<div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg p-4">
+									<h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-1.5">
+										<span className="w-5 h-5 rounded-full bg-blue-200 dark:bg-blue-900 flex items-center justify-center text-xs font-medium text-blue-800 dark:text-blue-300">1</span>
+										Set Up Your API Key
+									</h3>
+									<p className="text-xs text-blue-700 dark:text-blue-400 ml-6.5">
+										Enter your Gemini API key in the settings above and click "Test Connection".
+									</p>
+								</div>
+								
+								<div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg p-4">
+									<h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-1.5">
+										<span className="w-5 h-5 rounded-full bg-blue-200 dark:bg-blue-900 flex items-center justify-center text-xs font-medium text-blue-800 dark:text-blue-300">2</span>
+										Use Double Route Syntax
+									</h3>
+									<p className="text-xs text-blue-700 dark:text-blue-400 ml-6.5">
+										To use AI for search enhancement, use the double route indicator followed by the route tag:<br />
+										<code className="bg-blue-100 dark:bg-blue-900/50 px-1.5 py-0.5 rounded text-xs font-mono mt-1 inline-block">
+											{routeIndicator}{routeIndicator}g your search query
+										</code>
+									</p>
+								</div>
+								
+								<div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg p-4">
+									<h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-1.5">
+										<span className="w-5 h-5 rounded-full bg-blue-200 dark:bg-blue-900 flex items-center justify-center text-xs font-medium text-blue-800 dark:text-blue-300">3</span>
+										Examples to Try
+									</h3>
+									<div className="text-xs text-blue-700 dark:text-blue-400 ml-6.5 space-y-2">
+										<p className="font-medium">Try these sample searches:</p>
+										<ul className="list-disc pl-4 space-y-1.5">
+											<li><code className="bg-blue-100 dark:bg-blue-900/50 px-1 py-0.5 rounded">{routeIndicator}{routeIndicator}g best resources for learning python programming</code></li>
+											<li><code className="bg-blue-100 dark:bg-blue-900/50 px-1 py-0.5 rounded">{routeIndicator}{routeIndicator}g research papers on climate change published last year</code></li>
+											<li><code className="bg-blue-100 dark:bg-blue-900/50 px-1 py-0.5 rounded">{routeIndicator}{routeIndicator}y how to make sourdough bread step by step</code></li>
+										</ul>
+									</div>
+								</div>
 							</div>
 						</div>
 					</section>
