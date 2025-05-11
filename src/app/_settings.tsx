@@ -30,49 +30,55 @@ import {
 } from "@/components/ui/command";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { store } from "@/sw/store";
 
-// Definiere die verfügbaren Gemini-Modelle
+// Define the available Gemini models
 const geminiModels = [
 	{
-		value: "gemini-2.5-pro-preview-05-06",
-		label: "Gemini 2.5 Pro Preview (05-06)",
-		description: "Enhanced thinking and reasoning, multimodal understanding, advanced coding"
-	},
-	{
-		value: "gemini-2.5-flash-preview-04-17",
-		label: "Gemini 2.5 Flash Preview (04-17)",
-		description: "Adaptive thinking, cost efficiency"
-	},
-	{
-		value: "gemini-2.0-flash",
-		label: "Gemini 2.0 Flash",
-		description: "Next generation features, speed, thinking, and realtime streaming"
-	},
-	{
-		value: "gemini-2.0-flash-preview-image-generation",
-		label: "Gemini 2.0 Flash Image Generation",
-		description: "Conversational image generation and editing"
-	},
-	{
-		value: "gemini-2.0-flash-lite",
-		label: "Gemini 2.0 Flash-Lite",
-		description: "Cost efficiency and low latency"
-	},
-	{
 		value: "gemini-1.5-flash",
-		label: "Gemini 1.5 Flash",
-		description: "Fast and versatile performance across diverse tasks"
+		label: "Gemini 1.5 Flash (FREE)",
+		description: "Fast and versatile performance across diverse tasks with 1M token context"
 	},
 	{
 		value: "gemini-1.5-pro",
 		label: "Gemini 1.5 Pro",
-		description: "Complex reasoning tasks requiring more intelligence"
+		description: "Complex reasoning tasks requiring more intelligence with 2M token context"
 	},
 	{
 		value: "gemini-1.5-flash-8b",
-		label: "Gemini 1.5 Flash-8B",
-		description: "High volume and lower intelligence tasks"
+		label: "Gemini 1.5 Flash-8B (FREE)",
+		description: "High volume and lower intelligence tasks with 1M token context"
 	},
+	{
+		value: "gemini-2.0-flash",
+		label: "Gemini 2.0 Flash (FREE)",
+		description: "Next generation features, speed, thinking, and realtime streaming"
+	},
+	{
+		value: "gemini-2.0-flash-lite",
+		label: "Gemini 2.0 Flash-Lite (FREE)",
+		description: "Cost efficiency and low latency with 1M token context"
+	},
+	{
+		value: "gemini-2.5-flash-preview-04-17",
+		label: "Gemini 2.5 Flash Preview",
+		description: "Adaptive thinking and cost efficiency with 1M token context"
+	},
+	{
+		value: "gemini-2.5-pro-preview-05-06",
+		label: "Gemini 2.5 Pro Preview",
+		description: "Enhanced thinking, reasoning, multimodal understanding, advanced coding"
+	},
+	{
+		value: "gemini-2.0-flash-preview-image-generation",
+		label: "Gemini 2.0 Flash Image Generation",
+		description: "Conversational image generation and editing capabilities"
+	},
+	{
+		value: "text-embedding-004",
+		label: "Text Embedding 004 (FREE)",
+		description: "Advanced text embedding model for measuring relatedness of text strings"
+	}
 ];
 
 function Settings() {
@@ -123,7 +129,7 @@ function Settings() {
 		reset: resetGeminiModel,
 	} = useStoreValue("ai.gemini.model");
 
-	// Setze den initialen Wert für das ausgewählte Modell, wenn geminiModel existiert
+	// Set the initial value for the selected model if geminiModel exists
 	useEffect(() => {
 		if (geminiModel) {
 			const foundModel = geminiModels.find(model => model.value === geminiModel);
@@ -135,13 +141,13 @@ function Settings() {
 		}
 	}, [geminiModel]);
 
-	// Handler für die Modell-Änderung
+	// Handler for model change
 	const handleModelChange = (value: string) => {
 		setSelectedModel(value);
 		setGeminiModel(value);
 	};
 
-	// Handler für benutzerdefinierte Modell-Eingabe
+	// Handler for custom model input
 	const handleCustomModelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const value = e.target.value;
 		setCustomModelName(value);
@@ -161,11 +167,23 @@ function Settings() {
 	function handleSave() {
 		setIsSaving(true);
 		
-		// Simuliere eine Speicheroperation
-		setTimeout(() => {
-			setIsSaving(false);
-			toast.success("Settings saved successfully");
-		}, 600);
+		// Actual saving to IndexedDB
+		Promise.all([
+			store.set("general.routeIndicator", routeIndicator),
+			store.set("general.defaultRoute", defaultRoute),
+			store.set("ai.gemini.apiKey", geminiApiKey),
+			store.set("ai.gemini.prompt", geminiPrompt),
+			store.set("ai.gemini.model", geminiModel),
+		])
+			.then(() => {
+				setIsSaving(false);
+				toast.success("Settings saved successfully");
+			})
+			.catch((err) => {
+				console.error("Error saving settings:", err);
+				setIsSaving(false);
+				toast.error("Error saving settings");
+			});
 	}
 
 	return (
@@ -311,6 +329,7 @@ function Settings() {
 											</HoverCardTrigger>
 											<HoverCardContent className="w-80">
 												<p>The Gemini model to use. Select from available models or enter a custom model name.</p>
+												<p className="mt-2 text-xs font-medium text-green-600 dark:text-green-400">Models marked with (FREE) don't require a paid account and can be used with a free API key.</p>
 											</HoverCardContent>
 										</HoverCard>
 									</div>

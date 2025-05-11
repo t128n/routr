@@ -27,10 +27,16 @@ export default function App() {
 	const handleSearch = async (e: React.FormEvent) => {
 		e.preventDefault();
 		setIsSearching(true);
-		// Simulate search delay
-		await new Promise(resolve => setTimeout(resolve, 500));
-		setIsSearching(false);
-		// Your actual search logic here
+		
+		const searchInput = searchInputRef.current;
+		if (searchInput && searchInput.value.trim()) {
+			// Redirect to the current page with the search query as a parameter
+			const searchQuery = encodeURIComponent(searchInput.value.trim());
+			window.location.href = `${window.location.origin}${window.location.pathname}?q=${searchQuery}`;
+		} else {
+			setIsSearching(false);
+			toast.error("Please enter a search query");
+		}
 	};
 
 	return (
