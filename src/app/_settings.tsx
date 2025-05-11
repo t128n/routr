@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox";
 import { useStoreValue } from "@/hooks/use-store-value";
 import routes from "@/sw/routes";
-import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, Eye, FileText, ChevronDown, ChevronUp, SaveIcon } from "lucide-react";
+import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, Eye, FileText, ChevronDown, ChevronUp, SaveIcon, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,6 +31,9 @@ import {
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { store } from "@/sw/store";
+import { testConnection } from "@/sw/ai";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 // Define the available Gemini models
 const geminiModels = [
@@ -88,6 +91,8 @@ function Settings() {
 	const [selectedModel, setSelectedModel] = useState("");
 	const [customModelName, setCustomModelName] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
+	const [isTestingConnection, setIsTestingConnection] = useState(false);
+	const [connectionTestResult, setConnectionTestResult] = useState<{ success: boolean; message: string } | null>(null);
 	
 	// Detect if screen is mobile size
 	useEffect(() => {
@@ -154,6 +159,40 @@ function Settings() {
 		setGeminiModel(value);
 	};
 
+	// Test API connection with current key and model
+	const handleTestConnection = async () => {
+		// Reset previous test result
+		setConnectionTestResult(null);
+		setIsTestingConnection(true);
+		
+		const modelToTest = geminiModel || (selectedModel || "gemini-1.5-flash");
+		
+		try {
+			const result = await testConnection(geminiApiKey, modelToTest);
+			
+			// Ensure message is always defined
+			const message = result.message || "No error message provided";
+			setConnectionTestResult({
+				success: result.success,
+				message: message
+			});
+			
+			if (result.success) {
+				toast.success("API connection test successful");
+			} else {
+				toast.error(`API connection test failed: ${message}`);
+			}
+		} catch (error) {
+			setConnectionTestResult({ 
+				success: false, 
+				message: error instanceof Error ? error.message : "Unknown error occurred" 
+			});
+			toast.error("API connection test failed");
+		} finally {
+			setIsTestingConnection(false);
+		}
+	};
+
 	function handleReset() {
 		resetRouteIndicator();
 		resetDefaultRoute();
@@ -162,6 +201,7 @@ function Settings() {
 		resetGeminiModel();
 		setSelectedModel("");
 		setCustomModelName("");
+		setConnectionTestResult(null);
 	}
 
 	function handleSave() {
