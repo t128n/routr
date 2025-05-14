@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { VirtualizedCombobox } from "@/components/ui/virtualized-combobox";
 import { useStoreValue } from "@/hooks/use-store-value";
 import routes from "@/sw/routes";
-import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, Eye, FileText, ChevronDown, ChevronUp, SaveIcon, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
+import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, FileText, ChevronDown, ChevronUp, SaveIcon, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -25,7 +25,6 @@ import {
 	CommandItem,
 	CommandList 
 } from "@/components/ui/command";
-import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { store } from "@/sw/store";
 import { testConnection } from "@/sw/ai";

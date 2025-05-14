@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { useRef, useEffect, useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { store } from "@/sw/store";
-import { Badge } from "@/components/ui/badge";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 
 export default function App() {
@@ -18,13 +17,13 @@ export default function App() {
 	const [aiEnabled, setAiEnabled] = useState<boolean | null>(null);
 	const [routeIndicator, setRouteIndicator] = useState('!');
 	const [searchPlaceholder, setSearchPlaceholder] = useState("Search... (Press '/' to focus)");
-	const [searchSuggestions, setSearchSuggestions] = useState<string[]>([
+	const searchSuggestions = [
 		"best digital photography courses online",
 		"healthy meal prep ideas for busy professionals",
 		"most efficient workout routines for beginners",
 		"top rated science fiction books 2025",
 		"how to improve productivity working from home"
-	]);
+	];
 	
 	// On mount, check if AI is enabled
 	useEffect(() => {
