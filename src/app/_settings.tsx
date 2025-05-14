@@ -16,9 +16,6 @@ import routes from "@/sw/routes";
 import { CogIcon, RotateCwIcon, InfoIcon, EyeIcon, EyeOffIcon, Code, Eye, FileText, ChevronDown, ChevronUp, SaveIcon, CheckCircle2, XCircle, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { 
 	Command, 
@@ -86,27 +83,12 @@ const geminiModels = [
 
 function Settings() {
 	const [showApiKey, setShowApiKey] = useState(false);
-	const [isMobile, setIsMobile] = useState(false);
 	const [open, setOpen] = useState(false);
 	const [selectedModel, setSelectedModel] = useState("");
 	const [customModelName, setCustomModelName] = useState("");
 	const [isSaving, setIsSaving] = useState(false);
 	const [isTestingConnection, setIsTestingConnection] = useState(false);
 	const [connectionTestResult, setConnectionTestResult] = useState<{ success: boolean; message: string } | null>(null);
-	
-	// Detect if screen is mobile size
-	useEffect(() => {
-		const checkIfMobile = () => {
-			setIsMobile(window.innerWidth < 768);
-		};
-		
-		checkIfMobile();
-		window.addEventListener('resize', checkIfMobile);
-		
-		return () => {
-			window.removeEventListener('resize', checkIfMobile);
-		};
-	}, []);
 	
 	const {
 		value: routeIndicator,
@@ -165,7 +147,7 @@ function Settings() {
 		setConnectionTestResult(null);
 		setIsTestingConnection(true);
 		
-		const modelToTest = geminiModel || (selectedModel || "gemini-1.5-flash");
+		const modelToTest = geminiModel || (selectedModel || "gemini-2.0-flash");
 		
 		try {
 			const result = await testConnection(geminiApiKey, modelToTest);
@@ -496,59 +478,17 @@ function Settings() {
 											<InfoIcon className="w-4 h-4 text-muted-foreground cursor-help" />
 										</HoverCardTrigger>
 										<HoverCardContent className="w-80">
-											<p>The system prompt supports Markdown formatting for better readability and structure.</p>
+											<p>The system prompt that guides the AI's behavior. This helps shape how the AI responds to your queries.</p>
 										</HoverCardContent>
 									</HoverCard>
 								</div>
-								<Tabs defaultValue="markdown" className="w-full">
-									<TabsList className="mb-4 w-full justify-start">
-										<TabsTrigger value="markdown" className="flex items-center gap-1 px-4 py-2">
-											<Eye className="w-4 h-4" />
-											<span>Markdown Editor</span>
-										</TabsTrigger>
-										<TabsTrigger value="raw" className="flex items-center gap-1 px-4 py-2">
-											<Code className="w-4 h-4" />
-											<span>Raw Prompt</span>
-										</TabsTrigger>
-									</TabsList>
-									<TabsContent value="markdown" className="mt-0">
-										<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-											<div className="space-y-2">
-												<div className="flex justify-between items-center">
-													<Label htmlFor="prompt-editor" className="text-sm font-medium">Editor</Label>
-												</div>
-												<Textarea
-													id="prompt-editor"
-													placeholder="Enter your system prompt with Markdown formatting..."
-													value={geminiPrompt}
-													onChange={(e) => setGeminiPrompt(e.target.value)}
-													className={`min-h-[${isMobile ? '200px' : '400px'}] font-mono text-sm`}
-												/>
-											</div>
-											<div className="space-y-2">
-												<Label className="text-sm font-medium">Preview</Label>
-												<div className={`border rounded-md p-4 min-h-[${isMobile ? '200px' : '400px'}] overflow-auto prose prose-sm dark:prose-invert max-w-none bg-white dark:bg-zinc-900`}>
-													{geminiPrompt ? (
-														<ReactMarkdown remarkPlugins={[remarkGfm]}>
-															{geminiPrompt}
-														</ReactMarkdown>
-													) : (
-														<p className="text-muted-foreground italic">No preview available. Please enter a system prompt.</p>
-													)}
-												</div>
-											</div>
-										</div>
-									</TabsContent>
-									<TabsContent value="raw" className="mt-0">
-										<Textarea
-											id="prompt-raw"
-											placeholder="Enter your system prompt..."
-											value={geminiPrompt}
-											onChange={(e) => setGeminiPrompt(e.target.value)}
-											className={`min-h-[${isMobile ? '400px' : '600px'}] w-full font-mono text-sm`}
-										/>
-									</TabsContent>
-								</Tabs>
+								<Textarea
+									id="prompt"
+									placeholder="Enter your system prompt..."
+									value={geminiPrompt}
+									onChange={(e) => setGeminiPrompt(e.target.value)}
+									className="min-h-[400px] w-full font-mono text-sm"
+								/>
 							</div>
 						</div>
 					</section>
@@ -644,4 +584,4 @@ function Settings() {
 	);
 }
 
-export { Settings };
+export default Settings;
