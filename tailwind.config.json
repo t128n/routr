@@ -6,5 +6,7 @@
   "theme": {
     "extend": {}
   },
-  "plugins": {}
+  "plugins": {
+    "@tailwindcss/typography": {}
+  }
 } 

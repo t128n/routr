@@ -1,4 +1,4 @@
-import { Settings } from "@/app/_settings";
+import Settings from "@/app/_settings";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SplitIcon } from "lucide-react";
 
