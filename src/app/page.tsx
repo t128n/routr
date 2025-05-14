@@ -68,10 +68,9 @@ export default function App() {
 		e.preventDefault();
 		setIsSearching(true);
 		
-		const searchInput = searchInputRef.current;
-		if (searchInput && searchInput.value.trim()) {
+		if (searchValue.trim()) {
 			// Redirect to the current page with the search query as a parameter
-			const searchQuery = encodeURIComponent(searchInput.value.trim());
+			const searchQuery = encodeURIComponent(searchValue.trim());
 			window.location.href = `${window.location.origin}${window.location.pathname}?q=${searchQuery}`;
 		} else {
 			setIsSearching(false);

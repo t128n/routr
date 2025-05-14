@@ -494,52 +494,62 @@ function Settings() {
 					</section>
 
 					{/* AI Testing Guide */}
-					<section className="space-y-4 sm:space-y-6 p-4 rounded-lg border bg-card/50 shadow-sm">
+					<section className="space-y-3 sm:space-y-4 p-3 rounded-md border bg-card/50 shadow-sm">
 						<div>
-							<h2 className="text-lg font-semibold mb-2 flex items-center gap-2">
-								<AlertCircle className="w-4 h-4" />
-								How to Test AI Integration
+							<h2 className="text-base font-semibold mb-1 flex items-center gap-1.5 tracking-tight">
+								<AlertCircle className="w-4 h-4 text-pink-600 dark:text-pink-400" />
+								<span className="uppercase tracking-widest text-xs text-pink-600 dark:text-pink-400 font-bold">AI Integration Test</span>
 							</h2>
-							<p className="text-sm text-muted-foreground mb-4">
-								Follow these steps to test the Gemini AI functionality in your searches.
+							<p className="text-xs text-muted-foreground mb-2">
+								Quick steps to verify Gemini AI search enhancement.
 							</p>
 						</div>
-						<div className="space-y-6">
-							<div className="grid gap-4">
-								<div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg p-4">
-									<h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-1.5">
-										<span className="w-5 h-5 rounded-full bg-blue-200 dark:bg-blue-900 flex items-center justify-center text-xs font-medium text-blue-800 dark:text-blue-300">1</span>
-										Set Up Your API Key
-									</h3>
-									<p className="text-xs text-blue-700 dark:text-blue-400 ml-6.5">
-										Enter your Gemini API key in the settings above and click "Test Connection".
-									</p>
+						<div className="space-y-3">
+							<div className="grid gap-1.5">
+								{/* Step 1 */}
+								<div className="rounded p-1.5 flex items-start gap-2 bg-transparent">
+									<span className="w-5 h-5 flex items-center justify-center rounded bg-pink-100 dark:bg-pink-900 text-xs font-mono font-semibold text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-900/60 select-none">1</span>
+									<div>
+										<div className="font-mono text-xs font-semibold mb-0.5">Set Up API Key</div>
+										<p className="text-xs text-black dark:text-white leading-tight">
+											Enter your Gemini API key above and click <span className="font-mono text-pink-600 dark:text-pink-400">Test Connection</span>.
+										</p>
+									</div>
 								</div>
-								
-								<div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg p-4">
-									<h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-1.5">
-										<span className="w-5 h-5 rounded-full bg-blue-200 dark:bg-blue-900 flex items-center justify-center text-xs font-medium text-blue-800 dark:text-blue-300">2</span>
-										Use Double Route Syntax
-									</h3>
-									<p className="text-xs text-blue-700 dark:text-blue-400 ml-6.5">
-										To use AI for search enhancement, use the double route indicator followed by the route tag:<br />
-										<code className="bg-blue-100 dark:bg-blue-900/50 px-1.5 py-0.5 rounded text-xs font-mono mt-1 inline-block">
-											{routeIndicator}{routeIndicator}g your search query
-										</code>
-									</p>
+								{/* Step 2 */}
+								<div className="rounded p-1.5 flex items-start gap-2 bg-transparent">
+									<span className="w-5 h-5 flex items-center justify-center rounded bg-pink-100 dark:bg-pink-900 text-xs font-mono font-semibold text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-900/60 select-none">2</span>
+									<div>
+										<div className="font-mono text-xs font-semibold mb-0.5">Use Double Route Syntax</div>
+										<p className="text-xs text-black dark:text-white leading-tight">
+											Prefix your search with double route indicator and route tag:<br />
+											<code className="px-1 py-0.5 rounded bg-pink-50 dark:bg-pink-900/10 border border-pink-200 dark:border-pink-900/40 text-xs font-mono text-pink-700 dark:text-pink-300 mt-1 inline-block">
+												{routeIndicator}{routeIndicator}g your search query
+											</code>
+										</p>
+									</div>
 								</div>
-								
-								<div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 rounded-lg p-4">
-									<h3 className="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2 flex items-center gap-1.5">
-										<span className="w-5 h-5 rounded-full bg-blue-200 dark:bg-blue-900 flex items-center justify-center text-xs font-medium text-blue-800 dark:text-blue-300">3</span>
-										Examples to Try
-									</h3>
-									<div className="text-xs text-blue-700 dark:text-blue-400 ml-6.5 space-y-2">
-										<p className="font-medium">Try these sample searches:</p>
-										<ul className="list-disc pl-4 space-y-1.5">
-											<li><code className="bg-blue-100 dark:bg-blue-900/50 px-1 py-0.5 rounded">{routeIndicator}{routeIndicator}g best resources for learning python programming</code></li>
-											<li><code className="bg-blue-100 dark:bg-blue-900/50 px-1 py-0.5 rounded">{routeIndicator}{routeIndicator}g research papers on climate change published last year</code></li>
-											<li><code className="bg-blue-100 dark:bg-blue-900/50 px-1 py-0.5 rounded">{routeIndicator}{routeIndicator}y how to make sourdough bread step by step</code></li>
+								{/* Step 3 */}
+								<div className="rounded p-1.5 flex items-start gap-2 bg-transparent">
+									<span className="w-5 h-5 flex items-center justify-center rounded bg-pink-100 dark:bg-pink-900 text-xs font-mono font-semibold text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-900/60 select-none">3</span>
+									<div>
+										<div className="font-mono text-xs font-semibold mb-0.5">Try Examples</div>
+										<ul className="list-none pl-0 space-y-1">
+											<li>
+												<code className="px-1 py-0.5 rounded bg-pink-50 dark:bg-pink-900/10 border border-pink-200 dark:border-pink-900/40 text-xs font-mono text-pink-700 dark:text-pink-300">
+													{routeIndicator}{routeIndicator}g best resources for learning python programming
+												</code>
+											</li>
+											<li>
+												<code className="px-1 py-0.5 rounded bg-pink-50 dark:bg-pink-900/10 border border-pink-200 dark:border-pink-900/40 text-xs font-mono text-pink-700 dark:text-pink-300">
+													{routeIndicator}{routeIndicator}g research papers on climate change published last year
+												</code>
+											</li>
+											<li>
+												<code className="px-1 py-0.5 rounded bg-pink-50 dark:bg-pink-900/10 border border-pink-200 dark:border-pink-900/40 text-xs font-mono text-pink-700 dark:text-pink-300">
+													{routeIndicator}{routeIndicator}y how to make sourdough bread step by step
+												</code>
+											</li>
 										</ul>
 									</div>
 								</div>
